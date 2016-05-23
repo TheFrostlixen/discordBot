@@ -1,28 +1,40 @@
-#!/usr/bin/python
-
 import discord
+import asyncio
 import requests
 import configparser
 
-import requests.packages.urllib3
-requests.packages.urllib3.disable_warnings()
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 #create the client object
 client = discord.Client()
-config = ConfigParser.ConfigParser()
+config = configparser.ConfigParser()
 
-config.read("\\botConfig")
-print(config['Account'])
+config.read("botConfig")
 
-token = something
 
-client.login(token)
-client.run()
-
-def test_function(message):
-    client.send_message(message.channel, '%s, hello!' % message.author)
+token = config.get('Account', 'token')
+print(discord.__version__)
 
 @client.event
-def on_message(message):
+async def on_message(message):
+    print("Asdf")
     if message.content.startswith('!test'):
-        test_function(message)
+        print("asdfasdf")
+        await client.send_message(message.channel, '%s, hello!' % message.author)
+        
+@client.event
+async def on_ready():
+    print('Logged in as')
+    print(client.user.name)
+    print(client.user.id)
+    print('------')
+
+
+client.run(token)
+
+
+
+
+
