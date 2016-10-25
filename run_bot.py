@@ -13,7 +13,7 @@ random.seed()
 client = discord.Client()
 config = configparser.ConfigParser()
 
-config.read("botConfig")
+config.read("bot.config")
 
 LUNCH_OPTIONS = ["In-N-Out", "Panda Express", "Canes", "Chipotle", "McDonalds", "Jack in the Box"]
 
