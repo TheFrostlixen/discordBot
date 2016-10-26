@@ -1,4 +1,5 @@
 import discord
+from discord.ext import commands
 import asyncio
 from configparser import ConfigParser
 import requests
@@ -7,25 +8,33 @@ import logging
 #logging.basicConfig(level=logging.INFO)
 print("Using DISCORD.PY v" + discord.__version__)
 
-#create the client object
-client = discord.Client()
-
+# Read token and settings from config file
 config = ConfigParser()
-config.read("bot.config")
+config.read("config/bot.config")
 token = config.get('Account', 'token')
+desc = config.get('Settings', 'desc')
+symbol = config.get('Settings', 'symbol')
 
-@client.event
-async def on_message(message):
-	if message.content.startswith('!test'):
-		await client.send_message(message.channel, '@%s, hello!' % message.author)
-	elif message.content.startswith('!status'):
-		await client.send_message(message.channel, 'Online and fully operational.')
-		
-@client.event
+# Create the bot client object
+bot = commands.Bot(command_prefix=symbol, description=desc)
+
+
+''' BOT COMMAND DEFINITIONS '''
+@bot.command()
+async def add(left : int, right : int):
+	await bot.say(left + right)
+
+@bot.command()
+async def status():
+	await bot.say("Currently online and ready.")
+
+
+''' BOT EVENT DEFINITIONS '''
+@bot.event
 async def on_ready():
 	print('Logged in as')
-	print(client.user.name)
-	print(client.user.id)
+	print(bot.user.name)
+	print(bot.user.id)
 	print('------')
 
-client.run(token)
+bot.run(token)

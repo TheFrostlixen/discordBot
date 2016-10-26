@@ -1,1 +1,2 @@
-bot.config
+config/bot.config
+__pycache__/*
