@@ -1,47 +1,6 @@
-import asyncio
 import discord
 from discord.ext import commands
-from configparser import ConfigParser
 from voice import VoiceEntry, VoiceState
-
-if not discord.opus.is_loaded():
-    # the 'opus' library here is opus.dll on windows
-    # or libopus.so on linux in the current directory
-    # you should replace this with the location the
-    # opus library is located in and with the proper filename.
-    # note that on windows this DLL is automatically provided for you
-    discord.opus.load_opus('opus')
-
-class Music:
-    """Voice related commands.
-
-    Works in multiple servers at once.
-    """
-    def __init__(self, bot):
-        self.bot = bot
-        self.voice_states = {}
-
-    def get_voice_state(self, server):
-        state = self.voice_states.get(server.id)
-        if state is None:
-            state = VoiceState(self.bot)
-            self.voice_states[server.id] = state
-
-        return state
-
-    async def create_voice_client(self, channel):
-        voice = await self.bot.join_voice_channel(channel)
-        state = self.get_voice_state(channel.server)
-        state.voice = voice
-
-    def __unload(self):
-        for state in self.voice_states.values():
-            try:
-                state.audio_player.cancel()
-                if state.voice:
-                    self.bot.loop.create_task(state.voice.disconnect())
-            except:
-                pass
 
     @commands.command(pass_context=True, no_pm=True)
     async def join(self, ctx, *, channel : discord.Channel):
@@ -187,22 +146,4 @@ class Music:
         else:
             skip_count = len(state.skip_votes)
             await self.bot.say('Now playing {} [skips: {}/3]'.format(state.current, skip_count))
-
-bot = commands.Bot(command_prefix=commands.when_mentioned_or('$'), description='A playlist example for discord.py')
-bot.add_cog(Music(bot))
-
-@bot.event
-async def on_ready():
-    print('Logged in as:\n{0} (ID: {0.id})'.format(bot.user))
-
-
-
-config = ConfigParser()
-config.read("config/bot.config")
-token = config.get('Account', 'token')
-bot.run(token)
-
-
-
-
 

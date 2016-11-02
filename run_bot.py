@@ -1,9 +1,14 @@
 import discord
-from discord.ext import commands
 import asyncio
-from configparser import ConfigParser
 import requests
 import logging
+from voice import VoiceEntry, VoiceState
+from music import Music
+from configparser import ConfigParser
+from discord.ext import commands
+
+if not discord.opus.is_loaded():
+	discord.opus.load_opus('opus')
 
 #logging.basicConfig(level=logging.INFO)
 print("Using DISCORD.PY v" + discord.__version__)
@@ -17,7 +22,7 @@ symbol = config.get('Settings', 'symbol')
 
 # Create the bot client object
 bot = commands.Bot(command_prefix=symbol, description=desc)
-
+bot.add_cog(Music(bot))
 
 ''' BOT COMMAND DEFINITIONS '''
 @bot.command()
